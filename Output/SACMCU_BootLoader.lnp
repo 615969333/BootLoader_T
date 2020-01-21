@@ -1,0 +1,27 @@
+--cpu Cortex-M0
+"..\output\startup_lpc12xx.o"
+"..\output\system_lpc12xx.o"
+"..\output\core_cm0.o"
+"..\output\main.o"
+"..\output\lpc12xx_i2c.o"
+"..\output\lpc12xx_sysctrl.o"
+"..\output\debug_frmwrk.o"
+"..\output\lpc12xx_adc.o"
+"..\output\lpc12xx_comp.o"
+"..\output\lpc12xx_crc.o"
+"..\output\lpc12xx_dma.o"
+"..\output\lpc12xx_flash.o"
+"..\output\lpc12xx_gpio.o"
+"..\output\lpc12xx_iocon.o"
+"..\output\lpc12xx_libcfg_default.o"
+"..\output\lpc12xx_pmu.o"
+"..\output\lpc12xx_rtc.o"
+"..\output\lpc12xx_ssp.o"
+"..\output\lpc12xx_timer16.o"
+"..\output\lpc12xx_timer32.o"
+"..\output\lpc12xx_uart.o"
+"..\output\lpc12xx_wdt.o"
+--library_type=microlib --strict --scatter "..\Source\APP\mem_a.scf"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "..\Output\SACMCU_BootLoader.map" -o ..\Output\SACMCU_BootLoader.axf

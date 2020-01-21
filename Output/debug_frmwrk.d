@@ -1,0 +1,15 @@
+..\output\debug_frmwrk.o: ..\Source\Library\source\debug_frmwrk.c
+..\output\debug_frmwrk.o: ..\Source\APP\lpc12xx_libcfg.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc_types.h
+..\output\debug_frmwrk.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_iocon.h
+..\output\debug_frmwrk.o: ..\Source\CMIMS\LPC12xx\lpc12xx.h
+..\output\debug_frmwrk.o: ..\Source\CMIMS\CM0\core_cm0.h
+..\output\debug_frmwrk.o: ..\Source\CMIMS\LPC12xx\system_LPC12xx.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\debug_frmwrk.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_uart.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_gpio.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_sysctrl.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_adc.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_timer32.h
+..\output\debug_frmwrk.o: ..\Source\Library\include\lpc12xx_timer16.h

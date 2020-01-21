@@ -1,0 +1,498 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+<title>Static Call Graph - [..\Output\SACMCU_BootLoader.axf]</title></head>
+<body><HR>
+<H1>Static Call Graph for image ..\Output\SACMCU_BootLoader.axf</H1><HR>
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Tue Jan 21 23:59:02 2020
+<BR><P>
+<H3>Maximum Stack Usage =        148 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+Call chain for Maximum Stack Depth:</H3>
+main &rArr; uartInit &rArr; UART_SetConfig &rArr; uart_set_divisors &rArr; __aeabi_uidivmod
+<P>
+<H3>
+Mutually Recursive functions
+</H3> <LI><a href="#[1]">NMI_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1]">NMI_Handler</a><BR>
+ <LI><a href="#[2]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[2]">HardFault_Handler</a><BR>
+ <LI><a href="#[3]">SVC_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[3]">SVC_Handler</a><BR>
+ <LI><a href="#[4]">PendSV_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[4]">PendSV_Handler</a><BR>
+ <LI><a href="#[5]">SysTick_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[5]">SysTick_Handler</a><BR>
+ <LI><a href="#[10]">ADC_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[10]">ADC_IRQHandler</a><BR>
+</UL>
+<P>
+<H3>
+Function Pointers
+</H3><UL>
+ <LI><a href="#[10]">ADC_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[12]">BOD_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[f]">COMP_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[18]">DMA_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[1a]">EDM_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[13]">FMC_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[2]">HardFault_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[7]">I2C_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[1]">NMI_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[14]">PIOINT0_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[15]">PIOINT1_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[16]">PIOINT2_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[17]">PMU_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[4]">PendSV_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[19]">RTC_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[0]">Reset_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[c]">SSP_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[3]">SVC_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[5]">SysTick_Handler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[1c]">SystemInit</a> from system_lpc12xx.o(.text) referenced from startup_lpc12xx.o(.text)
+ <LI><a href="#[8]">TIMER16_0_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[9]">TIMER16_1_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[a]">TIMER32_0_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[b]">TIMER32_1_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[d]">UART0_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[e]">UART1_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[6]">WAKEUP_IRQHandler</a> from startup_lpc12xx.o(.text) referenced 12 times from startup_lpc12xx.o(RESET)
+ <LI><a href="#[11]">WDT_IRQHandler</a> from startup_lpc12xx.o(.text) referenced from startup_lpc12xx.o(RESET)
+ <LI><a href="#[1d]">__main</a> from entry.o(.ARM.Collect$$$$00000000) referenced from startup_lpc12xx.o(.text)
+ <LI><a href="#[1e]">_sputc</a> from printf1.o(i._sputc) referenced from printf1.o(i.__0sprintf$1)
+ <LI><a href="#[1b]">main</a> from main.o(.text) referenced from entry9a.o(.ARM.Collect$$$$0000000B)
+</UL>
+<P>
+<H3>
+Global Symbols
+</H3>
+<P><STRONG><a name="[1d]"></a>__main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry.o(.ARM.Collect$$$$00000000))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(.text)
+</UL>
+<P><STRONG><a name="[40]"></a>_main_stk</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry2.o(.ARM.Collect$$$$00000001))
+
+<P><STRONG><a name="[1f]"></a>_main_scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry5.o(.ARM.Collect$$$$00000004))
+<BR><BR>[Calls]<UL><LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+</UL>
+
+<P><STRONG><a name="[3d]"></a>__main_after_scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry5.o(.ARM.Collect$$$$00000004))
+<BR><BR>[Called By]<UL><LI><a href="#[20]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+</UL>
+
+<P><STRONG><a name="[41]"></a>_main_clock</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry7b.o(.ARM.Collect$$$$00000008))
+
+<P><STRONG><a name="[42]"></a>_main_cpp_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry8b.o(.ARM.Collect$$$$0000000A))
+
+<P><STRONG><a name="[43]"></a>_main_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry9a.o(.ARM.Collect$$$$0000000B))
+
+<P><STRONG><a name="[44]"></a>__rt_final_cpp</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry10a.o(.ARM.Collect$$$$0000000D))
+
+<P><STRONG><a name="[45]"></a>__rt_final_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, entry11a.o(.ARM.Collect$$$$0000000F))
+
+<P><STRONG><a name="[0]"></a>Reset_Handler</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NMI_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NMI_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[2]"></a>HardFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[3]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SVC_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SVC_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[4]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[5]"></a>SysTick_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[10]"></a>ADC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_IRQHandler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_IRQHandler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[12]"></a>BOD_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[f]"></a>COMP_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[18]"></a>DMA_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[1a]"></a>EDM_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[13]"></a>FMC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[7]"></a>I2C_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[14]"></a>PIOINT0_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[15]"></a>PIOINT1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[16]"></a>PIOINT2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[17]"></a>PMU_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[19]"></a>RTC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[c]"></a>SSP_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[8]"></a>TIMER16_0_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[9]"></a>TIMER16_1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[a]"></a>TIMER32_0_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[b]"></a>TIMER32_1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[d]"></a>UART0_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[e]"></a>UART1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[6]"></a>WAKEUP_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[11]"></a>WDT_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(RESET)
+</UL>
+<P><STRONG><a name="[21]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 404 bytes, Stack size 8 bytes, system_lpc12xx.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
+<LI><a href="#[22]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
+</UL>
+
+<P><STRONG><a name="[1c]"></a>SystemInit</STRONG> (Thumb, 192 bytes, Stack size 0 bytes, system_lpc12xx.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_lpc12xx.o(.text)
+</UL>
+<P><STRONG><a name="[35]"></a>myDelay</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, main.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[24]"></a>uartInit</STRONG> (Thumb, 120 bytes, Stack size 40 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = uartInit &rArr; UART_SetConfig &rArr; uart_set_divisors &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
+<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Init
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetConfig
+<LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ConfigTXD
+<LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ConfigInts
+<LI><a href="#[29]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYS_SetUART0ClockDiv
+<LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYS_ResetPeripheral
+<LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYS_ConfigAHBCLK
+<LI><a href="#[25]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IOCON_StructInit
+<LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IOCON_SetFunc
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[2f]"></a>uartSendByte</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = uartSendByte &rArr; UART_Send
+</UL>
+<BR>[Calls]<UL><LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Send
+<LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetLineStatus
+</UL>
+<BR>[Called By]<UL><LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartSendStr
+</UL>
+
+<P><STRONG><a name="[32]"></a>uartSendStr</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = uartSendStr &rArr; uartSendByte &rArr; UART_Send
+</UL>
+<BR>[Calls]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartSendByte
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[1b]"></a>main</STRONG> (Thumb, 140 bytes, Stack size 16 bytes, main.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = main &rArr; uartInit &rArr; UART_SetConfig &rArr; uart_set_divisors &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[34]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<LI><a href="#[33]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+<LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Send
+<LI><a href="#[32]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartSendStr
+<LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+<LI><a href="#[35]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;myDelay
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
+</UL>
+<P><STRONG><a name="[36]"></a>check_failed</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, main.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ClearAutoBaud
+<LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_StartAutoBaud
+<LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetINTStatus
+<LI><a href="#[39]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Receive
+<LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
+<LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Send
+<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Init
+<LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetLineStatus
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetConfig
+<LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ConfigTXD
+<LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ConfigInts
+<LI><a href="#[26]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IOCON_SetFunc
+</UL>
+
+<P><STRONG><a name="[46]"></a>SYS_GetResetStatus</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[47]"></a>SYS_SetMemMap</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[48]"></a>SYS_SelectSystemPLLCLKSource</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[49]"></a>SYS_ConfigSystemPLL</STRONG> (Thumb, 88 bytes, Stack size 16 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[4a]"></a>SYS_SelectMainCLKSource</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[4b]"></a>SYS_SetAHBClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[28]"></a>SYS_ConfigAHBCLK</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[4c]"></a>SYS_ConfigWDTOSC</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[4d]"></a>SYS_ConfigCLKOUTCLK</STRONG> (Thumb, 50 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[27]"></a>SYS_ResetPeripheral</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[4e]"></a>SYS_FlashOneCycleReadModeCmd</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[4f]"></a>SYS_SetSSPClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[29]"></a>SYS_SetUART0ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[50]"></a>SYS_SetUART1ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[51]"></a>SYS_SetGlitchFilter0ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[52]"></a>SYS_SetGlitchFilter1ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[53]"></a>SYS_SetGlitchFilter2ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[54]"></a>SYS_SetGlitchFilter3ClockDiv</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[55]"></a>SYS_SetGlitchFilter4ClockDiv</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[56]"></a>SYS_SetGlitchFilter5ClockDiv</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[57]"></a>SYS_SetGlitchFilter6ClockDiv</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[58]"></a>SYS_ConfigDeepSleep</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[59]"></a>SYS_ConfigPowerDown</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5a]"></a>SYS_ConfigWakeUp</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5b]"></a>SYS_NMIInterrupt</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5c]"></a>SYS_EnableStartLogic0</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5d]"></a>SYS_SetStartLogic0Edge</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5e]"></a>SYS_ResetStartLogic0</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[5f]"></a>SYS_EnableStartLogic1</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[60]"></a>SYS_SetStartLogic1Edge</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[61]"></a>SYS_ResetStartLogic1</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[62]"></a>SYS_GetDeviceID</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, lpc12xx_sysctrl.o(.text), UNUSED)
+
+<P><STRONG><a name="[26]"></a>IOCON_SetFunc</STRONG> (Thumb, 352 bytes, Stack size 24 bytes, lpc12xx_iocon.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = IOCON_SetFunc
+</UL>
+<BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[25]"></a>IOCON_StructInit</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, lpc12xx_iocon.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[2a]"></a>UART_Init</STRONG> (Thumb, 174 bytes, Stack size 16 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = UART_Init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_get_num
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[2c]"></a>UART_SetConfig</STRONG> (Thumb, 328 bytes, Stack size 16 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = UART_SetConfig &rArr; uart_set_divisors &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_set_divisors
+<LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_get_num
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[2b]"></a>UART_GetConfig</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = UART_GetConfig
+</UL>
+<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_get_num
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[2d]"></a>UART_ConfigTXD</STRONG> (Thumb, 52 bytes, Stack size 16 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = UART_ConfigTXD
+</UL>
+<BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[30]"></a>UART_Send</STRONG> (Thumb, 206 bytes, Stack size 48 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = UART_Send
+</UL>
+<BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartSendByte
+</UL>
+
+<P><STRONG><a name="[39]"></a>UART_Receive</STRONG> (Thumb, 128 bytes, Stack size 48 bytes, lpc12xx_uart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+
+<P><STRONG><a name="[31]"></a>UART_GetLineStatus</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART_GetLineStatus
+</UL>
+<BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartSendByte
+</UL>
+
+<P><STRONG><a name="[2e]"></a>UART_ConfigInts</STRONG> (Thumb, 138 bytes, Stack size 24 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = UART_ConfigInts
+</UL>
+<BR>[Calls]<UL><LI><a href="#[38]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_get_num
+<LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+<BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uartInit
+</UL>
+
+<P><STRONG><a name="[3a]"></a>UART_GetINTStatus</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, lpc12xx_uart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+
+<P><STRONG><a name="[3b]"></a>UART_StartAutoBaud</STRONG> (Thumb, 108 bytes, Stack size 16 bytes, lpc12xx_uart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+
+<P><STRONG><a name="[3c]"></a>UART_ClearAutoBaud</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, lpc12xx_uart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[36]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_failed
+</UL>
+
+<P><STRONG><a name="[63]"></a>__aeabi_uidiv</STRONG> (Thumb, 0 bytes, Stack size 12 bytes, uidiv.o(.text), UNUSED)
+
+<P><STRONG><a name="[23]"></a>__aeabi_uidivmod</STRONG> (Thumb, 44 bytes, Stack size 12 bytes, uidiv.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = __aeabi_uidivmod
+</UL>
+<BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
+<LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_set_divisors
+<LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
+</UL>
+
+<P><STRONG><a name="[33]"></a>strlen</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, strlen.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[20]"></a>__scatterload</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, init.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main_after_scatterload
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_main_scatterload
+</UL>
+
+<P><STRONG><a name="[64]"></a>__scatterload_rt2</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, init.o(.text), UNUSED)
+
+<P><STRONG><a name="[3e]"></a>__0sprintf$1</STRONG> (Thumb, 36 bytes, Stack size 24 bytes, printf1.o(i.__0sprintf$1), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sputc
+<LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
+</UL>
+
+<P><STRONG><a name="[65]"></a>__1sprintf$1</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printf1.o(i.__0sprintf$1), UNUSED)
+
+<P><STRONG><a name="[34]"></a>__2sprintf</STRONG> (Thumb, 0 bytes, Stack size 24 bytes, printf1.o(i.__0sprintf$1))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __2sprintf
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[22]"></a>__ARM_common_switch8</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, system_lpc12xx.o(i.__ARM_common_switch8), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[21]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
+</UL>
+
+<P><STRONG><a name="[66]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
+
+<P><STRONG><a name="[67]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_null), UNUSED)
+
+<P><STRONG><a name="[68]"></a>__scatterload_zeroinit</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_zeroinit), UNUSED)
+<P>
+<H3>
+Local Symbols
+</H3>
+<P><STRONG><a name="[38]"></a>uart_get_num</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
+<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Init
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_GetConfig
+<LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_ConfigInts
+</UL>
+
+<P><STRONG><a name="[37]"></a>uart_set_divisors</STRONG> (Thumb, 286 bytes, Stack size 64 bytes, lpc12xx_uart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = uart_set_divisors &rArr; __aeabi_uidivmod
+</UL>
+<BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
+</UL>
+
+<P><STRONG><a name="[3f]"></a>_printf_core</STRONG> (Thumb, 326 bytes, Stack size 88 bytes, printf1.o(i._printf_core), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[23]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
+</UL>
+<BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__0sprintf$1
+</UL>
+
+<P><STRONG><a name="[1e]"></a>_sputc</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, printf1.o(i._sputc))
+<BR><BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__0sprintf$1
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> printf1.o(i.__0sprintf$1)
+</UL><P>
+<H3>
+Undefined Global Symbols
+</H3><HR></body></html>

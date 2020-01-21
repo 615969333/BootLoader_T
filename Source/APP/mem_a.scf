@@ -1,0 +1,22 @@
+LOAD_ROM1 0x00000000
+{
+    EXEC_ROM1 0x00000000  			;// 用户程序区域，起始地址：0x4000
+    {
+		startup_LPC12xx.o (RESET, +First)
+    }    
+}
+
+LOAD_ROM2 0x00002000
+{    
+	 EXEC_ROM2 0x00002000  			;// 用户程序区域，起始地址：0x4000
+    {
+		main.o(+RO)
+        system_LPC12xx.o(+RO)
+        *(+RO)
+    }
+
+	IRAM2 0x100000E0 0x1F20
+    {
+        *(+RW,+ZI)
+    } 	
+}

@@ -1,0 +1,398 @@
+/****************************************Copyright (c)**************************************************
+**                               
+**                                      
+**                                 
+**
+**--------------File Info-------------------------------------------------------------------------------
+** File name:			main.c
+** Last modified Date:  2012-03-3
+** Last Version:		1.0
+** Descriptions:		The LPC1227 Boot Loader
+**
+**------------------------------------------------------------------------------------------------------
+** Created by:			LiuYueLin
+** Created date:		2012-3-3
+** Version:				1.0
+** Descriptions:		IAP升级 
+**------------------------------------------------------------------------------------------------------
+** Modified by:			DZX
+** Modified date:		2019-12-24
+** Version:					2.0
+** Descriptions:		全面改造
+**
+** Rechecked by:		
+********************************************************************************************************/
+
+#include <string.h>
+#include <stdio.h>  						//dzx
+
+
+#include "cfg.h"
+
+#include "IAP.h"
+#include "crc16.h"
+#include "notify.h"
+#include "keyboard.h"           
+#include "debugSerial.h"				//dzx
+
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc12xx_libcfg.h"
+#else
+#include "lpc12xx_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
+
+//Global variables :
+uint32_t *appFlagPoint = (uint32_t *)USER_FLAG;			/* 用户程序标志指针*/ 
+
+uint8_t *dst,*src;
+
+volatile uint8_t  iapSuccess = NO;
+
+extern volatile uint8_t  iapFlag;
+extern volatile uint8_t  iapFinishFlag;
+extern volatile uint16_t writeDataLength;
+extern volatile uint16_t readAckState;
+extern uint32_t time_over_flag;
+
+uint32_t  *Data32Point;
+uint8_t   crcCheckFlag = NO;
+uint32_t  flash_addr;
+uint16_t page_addr = LOW_PAGE_ADDR;
+uint16_t crcCode = 0;
+char sMsg[64];
+//End Global variables
+
+extern void TimerInit (void);				//dzx			hwTimer.c
+
+
+void BSP_Init (void)
+{
+	SystemInit();                                                       /* 系统时钟初始化               */
+    SYS_ConfigAHBCLK(SYS_AHBCLKCTRL_IOCON, ENABLE);                     /* IOCON模块使能                */
+	SYS_ConfigAHBCLK(SYS_AHBCLKCTRL_GPIO0, ENABLE);                     /* GPIO0模块时钟使能            */
+    SYS_ConfigAHBCLK(SYS_AHBCLKCTRL_GPIO1, ENABLE);                     /* GPIO1模块时钟使能            */
+	SYS_ConfigAHBCLK(SYS_AHBCLKCTRL_GPIO2, ENABLE);                     /* GPIO2模块时钟使能            */
+    SYS_ConfigAHBCLK(SYS_AHBCLKCTRL_SSP, ENABLE);                       /* SSP模块时钟使能              */
+	notifyInit();														    /* 初始化Notify管脚				*/
+	Disable_Notify(); 													/* az 禁止事件寄存器  		*/
+	KeyBoardINTInit();													/* 键盘中断初始化 				*/
+	KeyBacklightSW(POWER_ON);
+	I2CInit(&I2C_InitStuct,100000);							/* I2C初始化，100Kbit			*/
+	TimerInit();
+	
+#ifdef DEBUG_UART
+	uartInit();/* 串口初始化 */ 
+	
+	/*  dzx
+	sprintf(sMsg, "***Initial Success,Run in BootLoader area!\r\n");
+	uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+	*/
+	
+	sprintf(sMsg, "***Initial Success,Run in BootLoader area!\r\n");  
+	uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+
+#endif
+}
+
+
+/*********************************************************************************************************
+** 函数名称: ProgramUserData
+** 功能描述: 编程用户代码区。
+** 入口参数: 无
+** 出口参数: 无
+********************************************************************************************************/
+uint16_t ProgramUserData(void)
+{		
+	appFlagPoint = (uint32_t *)USER_FLAG;
+	if(*appFlagPoint == APP_INIT)								/* 当前程序无初始化，需要对HIGH区进行升级*/
+	{ 	
+		page_addr  = HIGH_PAGE_ADDR;
+		flash_addr = APP_HIGH;
+		crcCode = 0;	
+#ifdef DEBUG_UART
+		sprintf(sMsg, "***Updata The High Area!\r\n");  
+		uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+#endif
+		while(iapFinishFlag == NO)
+		{
+			if (iapFlag == YES)		
+			{
+				__disable_irq();										/* 关中断*/
+				SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+				ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+				SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+				RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer[2]), writeDataLength);	/* 写数据到FLASH*/
+				__enable_irq();											/* 开中断*/						
+				page_addr = page_addr + 4;
+				flash_addr = flash_addr + 0x800;
+				if(page_addr > APP_HIGH + 96)
+				{
+					page_addr  = HIGH_PAGE_ADDR;
+					flash_addr = APP_HIGH;		
+				}
+				iapFlag = NO;
+			}
+		}
+
+		appFlagPoint = 	(uint32_t *)APP_HIGH;
+		__disable_irq();
+		crcCode = data_check_sum((uint8_t *)appFlagPoint,iap_info.iap_length);
+		__enable_irq();
+		if(crcCode == (iap_info.iap_crc)&0xFFFF)
+			readAckState = IAP_SUCCEED;	
+		else
+		 	readAckState = OPERATE_ERROR;
+		Notify_S3C2440();										/* 通知2440读取状态*/					
+	}
+	else 														/* 需要对LOW区进行升级*/
+	{
+		page_addr  = LOW_PAGE_ADDR;
+		flash_addr = APP_LOW;
+		crcCode = 0;
+#ifdef DEBUG_UART
+		sprintf(sMsg, "***Updata The Low Area!\r\n");  
+		uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+#endif
+		TIM32_Cmd(LPC_TMR32B0, ENABLE);                             /* 开启定时器                   */
+		while(iapFinishFlag == NO)
+		{
+			if (iapFlag == YES)		
+			{
+				__disable_irq();										/* 关中断*/
+				SelSector  (page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+				ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+				SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+				RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer[2]), writeDataLength);	/* 写数据到FLASH*/
+				__enable_irq();											/* 开中断*/						
+				page_addr = page_addr + 4;
+				flash_addr = flash_addr + 0x800;
+				if(page_addr > (LOW_PAGE_ADDR + 96))
+				{
+					page_addr  = LOW_PAGE_ADDR;
+					flash_addr = APP_LOW;		
+				}
+				iapFlag = NO;
+			}
+
+			if(time_over_flag == YES)
+				break;
+		}
+
+		if(iapFinishFlag == YES)
+		{
+			appFlagPoint = 	(uint32_t *)APP_LOW;
+			__disable_irq();
+			crcCode = data_check_sum((uint8_t *)appFlagPoint,iap_info.iap_length);
+			__enable_irq();
+			if(crcCode == (iap_info.iap_crc)&0xFFFF)
+				readAckState = IAP_SUCCEED;	
+			else
+			 	readAckState = OPERATE_ERROR;
+			Notify_S3C2440();										/* 通知2440读取状态*/
+		}
+		else
+		{
+			readAckState = OPERATE_ERROR;
+		}
+	}
+	return (readAckState);
+}
+
+/*********************************************************************************************************
+** 函数名称: UpdateUserFlag
+** 功能描述: 更新用户程序标志区。
+** 入口参数: 无
+** 出口参数: 无
+********************************************************************************************************/
+void UpdateUserFlag(void)
+{
+	/* 更新用户程序标志空间 */
+	Data32Point  = (uint32_t *)I2CSlaveBuffer;
+	appFlagPoint = (uint32_t *)USER_FLAG;
+#ifdef DEBUG_UART
+//		sprintf(sMsg, "***Updata The User Flag!\r\n");     //dzx
+//		uartSendStr((uint8_t*)sMsg, strlen(sMsg));                     //dzx
+  	sprintf(sMsg, "***Updata The User Flag!\r\n");  
+		uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+#endif
+	if(*appFlagPoint == APP_INIT)					/* 高区更新数据*/
+	{
+		*Data32Point = APP_LOW;						/* 用户程序低区，以后只更新低区*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_hardVer;		/* 硬件版本号不变*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_length;			/* 更新高区用户程序长度*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_crc;			/* 更新高区用户程序CRC校验值*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_softVer;		/* 更新高区用户程序版本号*/
+		
+		page_addr  = USER_PAGE_ADDR;
+		flash_addr = USER_FLAG;
+		__disable_irq();
+		SelSector  (page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+		SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer), 64);	/* 写数据到FLASH*/
+		__enable_irq();	
+		
+		*Data32Point = 0x00000000;					/* IAP标志位*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_length;			/* 用户程序长度*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_crc;			/* 用户程序CRC校验值*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_softVer;		/* 用户程序版本号*/
+
+		page_addr = IAPDATA_PAGE_ADDR;
+		flash_addr = IAPDATA_FLAG;
+		__disable_irq();
+		SelSector  (page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+		SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer), 64);	/* 写数据到FLASH*/
+		__enable_irq();
+			
+	}
+	else 											/* 低区更新数据*/
+	{
+	 	*Data32Point = 0x00000000;					/* IAP标志位*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_length;			/* 用户程序长度*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_crc;			/* 用户程序CRC校验值*/
+		Data32Point++;
+		*Data32Point = iap_info.iap_softVer;		/* 用户程序版本号*/
+
+		page_addr = IAPDATA_PAGE_ADDR;
+		flash_addr = IAPDATA_FLAG;
+		__disable_irq();
+		SelSector  (page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+		SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+		RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer), 64);	/* 写数据到FLASH*/
+		__enable_irq();
+
+	}
+}
+
+
+__ASM void BOOT_APP(uint32_t vectoraddr)
+{
+	 LDR R1, [R0]		//Load new stack pointer address
+	 MSR MSP, R1
+	 LDR R1, [R0,#0x04]
+//	 MOV PC, R1
+   BX R1
+}
+
+
+void delayMs (uint16_t ms)
+{
+ 	uint16_t i;
+	while(ms--)
+	{
+	 	for(i=0;i<1000;i++);
+	}
+}
+
+/*********************************************************************************************************
+** 函数名称：main
+** 函数功能：在线升级函数Boot代码。
+********************************************************************************************************/
+int  main (void)
+{	
+	uint16_t  check_flag;
+	BSP_Init ();								/* 系统初始化*/
+
+	appFlagPoint = 	(uint32_t *)IAPDATA_FLAG;
+	if((*appFlagPoint == IAP_FLAG_CHECK)||(*appFlagPoint == APP_INIT))
+	{	
+		if(*appFlagPoint == IAP_FLAG_CHECK)
+		{
+		 	/* 清除标志位*/
+			Data32Point  = (uint32_t *)I2CSlaveBuffer;
+			*Data32Point = 0x00000000;					/* IAP标志位*/
+			Data32Point++;
+			*Data32Point = iap_info.iap_length;			/* 用户程序长度*/
+			Data32Point++;
+			*Data32Point = iap_info.iap_crc;			/* 用户程序CRC校验值*/
+			Data32Point++;
+			*Data32Point = iap_info.iap_softVer;		/* 用户程序版本号*/
+		
+			page_addr = IAPDATA_PAGE_ADDR;
+			flash_addr = IAPDATA_FLAG;
+			__disable_irq();
+			SelSector  (page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+			ErasePage(page_addr, page_addr+3);					/* 擦除LOW扇区*/
+			SelSector(page_addr/8, page_addr/8);					/* 选择LOW扇区*/
+			RamToFlash(flash_addr, (uint32_t)(&I2CSlaveBuffer), 64);	/* 写数据到FLASH*/
+			__enable_irq();
+#ifdef DEBUG_UART
+		sprintf(sMsg, "***IAP Flag Check yes!\r\n");  
+		uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+#endif			
+			readAckState = OPERATE_TRUE;	
+			Notify_S3C2440();										/* 通知2440读取状态*/
+		}
+		check_flag = ProgramUserData();
+		delayMs(100);
+#ifdef DEBUG_UART
+		sprintf(sMsg, "***Reboot yes!\r\n");  
+		uartSendStr((uint8_t*)sMsg, strlen(sMsg));
+#endif
+		if(check_flag == (IAP_SUCCEED))	/* 升级用户代码区,并且升级成功*/
+		{
+			UpdateUserFlag();					/* 更新用户程序标志区*/
+			NVIC_SystemReset();	
+		}
+		else
+		{
+		 	NVIC_SystemReset();	
+		}
+	}
+
+	appFlagPoint = (uint32_t *)USER_FLAG;
+	if (*appFlagPoint == APP_LOW)				/* 校验应用低区的数据是否正确*/
+	{
+		appFlagPoint = 	(uint32_t *)APPLOW_LENGTH_FLAG;
+		iap_info.iap_length = *appFlagPoint;
+		appFlagPoint = 	(uint32_t *)APPLOW_CRC_FLAG;
+		iap_info.iap_crc = *appFlagPoint;
+		appFlagPoint = 	(uint32_t *)APP_LOW;
+		crcCode = data_check_sum((uint8_t *)appFlagPoint,iap_info.iap_length);
+		if(crcCode == (iap_info.iap_crc)&0xFFFF)
+			crcCheckFlag = YES;
+		else
+		 	crcCheckFlag = NO;
+
+		if(crcCheckFlag == YES)
+		{
+			src = (uint8_t *)APP_LOW;				/* 复制高区源地址*/
+		}
+		else
+		{
+			src = (uint8_t *)APP_HIGH;				/* 复制高区源地址*/		
+		}
+	}
+	else											/* 如果低区数据错误，刚转到高区*/
+	{
+		src = (uint8_t *)APP_HIGH;					/* 复制高区源地址*/	
+	}
+
+	if(0 == GPIO_GetPinValue(KEY_PORT, KEY_ENTER)) /*扫描KEY_ENTER是否被按下*/
+	{	
+		src = (uint8_t *)APP_HIGH;					/* 复制高区源地址*/	
+	}
+	/* 运行用户程序 */
+	dst = (uint8_t *)REMP_RAM;						/* 目的地址*/
+	memcpy((void *)dst, (void *)src, 224);			/* 复制中断向量表到RAM地址中*/
+	SYS_SetMemMap(0x01);							/* 向量表重定义*/
+	BOOT_APP(REMP_RAM);		   						/* 运行应用程序*/
+    return (0);
+}
+
+/*********************************************************************************************************
+**                            End Of File
+********************************************************************************************************/

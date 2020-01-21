@@ -1,0 +1,644 @@
+/**************************************************************************//**
+ * $Id: lpc12xx_i2c.c 584 2010-09-25 13:49:30Z cnh20446 $
+ *
+ * @file     lpc12xx_i2c.c
+ * @brief    Contains all functions support for I2C firmware library on LPC12xx.
+ * @version  1.0
+ * @date     26. Sep. 2010
+ * @author   NXP MCU Team
+ *
+ * @note
+ * Copyright (C) 2010 NXP Semiconductors(NXP). All rights reserved.
+ *
+ * @par
+ * Software that is described herein is for illustrative purposes only
+ * which provides customers with programming information regarding the
+ * products. This software is supplied "AS IS" without any warranties.
+ * NXP Semiconductors assumes no responsibility or liability for the
+ * use of the software, conveys no license or title under any patent,
+ * copyright, or mask work right to the product. NXP Semiconductors
+ * reserves the right to make changes in the software without
+ * notification. NXP Semiconductors also make no representation or
+ * warranty that such application will be suitable for the specified
+ * use without further testing or modification.
+ ******************************************************************************/
+ 
+ /* Peripheral group ----------------------------------------------------------- */
+/** @addtogroup I2C
+ * @{
+ */
+
+/* Includes ------------------------------------------------------------------- */
+#include "lpc12xx_i2c.h"
+
+//#include "lpc12xx_libcfg.h"
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc12xx_libcfg.h"
+#else
+#include "lpc12xx_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
+#include "crc16.h"
+#include "notify.h"
+
+/* If this source file built with example, the LPC12xx FW library configuration
+ * file in each example directory ("lpc12xx_libcfg.h") must be included,
+ * otherwise the default FW library configuration file must be included instead
+ */
+#ifdef __BUILD_WITH_EXAMPLE__
+#include "lpc12xx_libcfg.h"
+#else
+#include "lpc12xx_libcfg_default.h"
+#endif /* __BUILD_WITH_EXAMPLE__ */
+
+#include "cfg.h"
+
+
+#ifdef _I2C
+volatile uint16_t  I2CSlaveBuffer[BUFSIZE/2] = {0x0000,0x0000};
+uint8_t  *datapoint;
+uint16_t readDataLength = 0;
+volatile uint16_t writeDataLength = 0;
+uint16_t  RecByteCnt = 0; 			/* 接收字节计数器*/
+uint16_t  sendByteCnt = 0; 			/* 发送字节计数器*/
+
+uint8_t  functionCode = WRITE_REGISTER;
+
+uint16_t crcData;
+volatile uint16_t readAckState = OPERATE_TRUE;
+volatile uint8_t  iapFlag = NO;
+volatile uint8_t  iapFinishFlag = NO;
+uint32_t iapDataLength = 0;
+volatile uint8_t bootLoader_iapFlag =0;
+extern uint32_t *appFlagPoint;
+
+
+
+/* I2C */
+I2C_InitTypeDef  I2C_InitStuct;
+
+volatile enum{
+	function_code_state,
+	read_length_state,
+	write_addr_state,
+	write_data_state, 
+	read_data_state,
+	read_status_state,
+	iap_info_state,
+	iap_command_state,
+	iap_state,
+	check_crc_state
+} command_state = function_code_state;
+
+/* 定义信息结构体*/
+iap_info_struct  iap_info;
+
+/** @defgroup 	I2C_Private_Functions
+ * @{
+ */
+
+/**
+  * @brief  Get I2C Status Byte.
+  *
+  *	@param	
+  * @retval The value of the status byte.  
+  */
+uint8_t I2C_GetI2CStatus( void )
+{
+	return (LPC_I2C->STAT);
+}
+
+/**
+  * @brief  Read the I2C_I2CONSET bit.
+  *
+  *	@param  I2C_I2CONSET: specifies the bits will be read.
+  *         This parameter can be one of the following values:
+  *				@arg I2C_I2CONSET_AA: Assert acknowledge flag
+  *				@arg I2C_I2CONSET_SI: I2C interrupt flag
+  *				@arg I2C_I2CONSET_STO: STOP flag
+  *  			@arg I2C_I2CONSET_STA: START flag
+  *				@arg I2C_I2CONSET_I2EN: I2C interface enable
+  * @retval The I2C_CONSET bit value.  
+  */
+uint8_t I2C_ReadFlag( uint8_t I2C_I2CONSET )
+{
+  	CHECK_PARAM(PARAM_I2C_I2CONSET(I2C_I2CONSET));
+																			  
+	return(LPC_I2C->CONSET & I2C_I2CONSET);      /* retuen flag */
+}
+
+/**
+  * @brief  Set the I2C_I2CONSET bit.
+  *
+  *	@param  I2C_I2CONSET: specifies the bits will be set.
+  *         This parameter can be one of the following values:
+  *				@arg I2C_I2CONSET_AA: Assert acknowledge flag
+  *				@arg I2C_I2CONSET_SI: I2C interrupt flag
+  *				@arg I2C_I2CONSET_STO: STOP flag
+  *  			@arg I2C_I2CONSET_STA: START flag
+  *				@arg I2C_I2CONSET_I2EN: I2C interface enable
+  * @retval None  
+  */
+void I2C_SetFlag( uint8_t I2C_I2CONSET )
+{
+  	CHECK_PARAM(PARAM_I2C_I2CONSET(I2C_I2CONSET));
+
+	LPC_I2C->CONSET = I2C_I2CONSET;      /* Set flag */
+}
+
+/**
+  * @brief  Clear the I2C_I2CONCLR bit.
+  *
+  *	@param  I2C_I2CONCLR: specifies the bits will be clear.
+  *         This parameter can be one of the following values:
+  *				@arg I2C_I2CONSET_AA: Assert acknowledge flag
+  *				@arg I2C_I2CONSET_SI: I2C interrupt flag
+  *  			@arg I2C_I2CONSET_STA: START flag
+  *				@arg I2C_I2CONSET_I2EN: I2C interface enable
+  * @retval  
+  */
+void I2C_ClearFlag( uint8_t I2C_I2CONCLR )
+{
+	CHECK_PARAM(PARAM_I2C_I2CONCLR(I2C_I2CONCLR));
+
+	LPC_I2C->CONCLR = I2C_I2CONCLR;      /* Clear flag */
+}
+
+/**
+  * @brief  
+  *
+  *	@param  DataByte: specifies the data byte will be sent.
+  * @retval None 
+  */
+void I2C_SendByte( uint8_t DataByte )
+{
+	LPC_I2C->DAT = DataByte; 
+}
+/**
+  * @brief  
+  *
+  *	@param	
+  * @retval The byte read from DAT register.  
+  */
+
+uint8_t I2C_GetByte( void )
+{
+	return(LPC_I2C->DAT);
+}
+
+/**
+  * @brief  Setup clock rate for I2C peripheral.
+  *
+  *	@param	TargetClock: speed of I2C bus(bps).
+  * @retval None  
+  */
+void I2C_SetClock (uint32_t TargetClock)
+{
+	uint32_t temp;
+
+	temp = SystemCoreClock  / TargetClock;
+
+	/* Set the I2C clock value to register */
+	LPC_I2C->SCLH = (uint32_t)(temp / 2);
+	LPC_I2C->SCLL = (uint32_t)(temp - LPC_I2C->SCLH);
+}
+
+/**
+  * @brief  De-initializes the I2C peripheral registers to their default reset values.
+  *
+  * @param  None
+  * @retval None  
+  */
+void I2C_DeInit(void)
+{
+	LPC_I2C->CONCLR = I2C_I2CONCLR_I2ENC;		/*!< Disable I2C control */
+	LPC_SYSCON->SYSAHBCLKCTRL  =  LPC_SYSCON->SYSAHBCLKCTRL & (~(1<<5));	/*!< Disable power for I2C module */
+}
+
+
+/**
+  * @brief  Initializes the i2c peripheral with specified parameter.
+  *
+  * @param  i2C_InitStruct: pointer to a I2C_InitStruct structure that 
+  *         contains the configuration information for the I2C peripheral.
+  * @retval None
+  */
+void I2C_Init(I2C_InitTypeDef* I2C_InitStuct)
+{
+	CHECK_PARAM(PARAM_I2C_MODE(I2C_InitStuct->Mode));
+	CHECK_PARAM(PARAM_I2C_INTERRUPT_MODE(I2C_InitStuct->InterruptMode));
+
+	/* Enable I2C clock and de-assert reset */
+    LPC_SYSCON->PRESETCTRL |= (0x1<<1);
+    LPC_SYSCON->SYSAHBCLKCTRL |= (1<<5);
+
+	/*  I2C I/O config */    
+    LPC_IOCON->PIO0_10 &= ~0x3F;	/*  I2C I/O config */
+    LPC_IOCON->PIO0_10 |= 0x02;		/* I2C SCL */
+    LPC_IOCON->PIO0_11 &= ~0x3F;
+    LPC_IOCON->PIO0_11 |= 0x02;		/* I2C SDA */
+    
+	/*--- Clear flags ---*/
+	LPC_I2C->CONCLR = I2C_I2CONCLR_AAC | I2C_I2CONCLR_SIC | I2C_I2CONCLR_STAC | I2C_I2CONCLR_I2ENC;    
+
+	/*--- Enable Ture Open Drain mode ---*/
+	LPC_IOCON->PIO0_10 |= (0x1<<10);
+	LPC_IOCON->PIO0_11 |= (0x1<<10);
+
+	/*--- Set Clock rate ---*/
+	I2C_SetClock( I2C_InitStuct -> ClockRate );
+
+	if ( I2C_InitStuct -> Mode == I2C_SLAVE )
+	{
+		LPC_I2C->ADR0 = I2C_InitStuct -> SlaveAddress;
+	}    
+
+	/* Enable the I2C Interrupt */
+	if (I2C_InitStuct -> InterruptMode == I2C_INTERRUPT_MODE )
+	{
+		NVIC_EnableIRQ(I2C_IRQn);
+	}
+	else if (I2C_InitStuct -> InterruptMode == I2C_POLLING_MODE ) 	
+	{
+		NVIC_DisableIRQ(I2C_IRQn);		/* Disable the I2C Interrupt */
+	}
+
+	if ( I2C_InitStuct -> Mode == I2C_MASTER )
+	{
+		LPC_I2C->CONSET = I2C_I2CONSET_I2EN;
+	} 
+	else if (I2C_InitStuct -> Mode == I2C_SLAVE)
+	{
+		LPC_I2C->CONSET = I2C_I2CONSET_I2EN | I2C_I2CONSET_SI;
+	}
+}
+
+
+void I2CInit(I2C_InitTypeDef* I2C_InitStuct,int32_t ulClkRate)
+{
+    /* Reset WDT init structure parameters values */
+    I2C_InitStuct->Mode				= I2C_SLAVE;
+    I2C_InitStuct->ClockRate		= ulClkRate;
+    I2C_InitStuct->SlaveAddress		= 0x84;
+    I2C_InitStuct->InterruptMode	= I2C_INTERRUPT_MODE;
+	I2C_Init(I2C_InitStuct);
+}
+
+
+/**
+  * @brief  Configures functionality in I2C monitor mode.
+  *
+  *	@param	I2C_I2MMCTRL: Monitor mode configuration type.
+  *         This parameter can be one of the following values:
+  * 			@arg I2C_I2MMCTRL_MM_ENA: Enable monitor mode.
+  * 			@arg I2C_I2MMCTRL_ENA_SCL: I2C module can 'stretch'
+  * 					the clock line (hold it low) until it has had time to
+  * 					respond to an I2C interrupt.
+  *				@arg I2C_I2MMCTRL_MATCH_ALL: When this bit is set to '1'
+  * 					and the I2C is in monitor mode, an interrupt will be
+  * 					generated on ANY address received.
+  *	@param	NewState: New State of this function, should be:
+  * 			@arg ENABLE: Enable this function.
+  * 			@arg DISABLE: Disable this function.
+  * @retval None  
+  */
+void I2C_MonitorModeConfig(uint32_t I2C_I2MMCTRL, FunctionalState NewState)
+{
+	CHECK_PARAM(PARAM_I2C_I2MMCTRL(I2C_I2MMCTRL));
+
+	if (NewState == ENABLE)
+	{
+		LPC_I2C->MMCTRL |= I2C_I2MMCTRL;
+	}
+	else
+	{
+		LPC_I2C->MMCTRL &= (~I2C_I2MMCTRL);
+	}
+}
+
+/**
+  * @brief  Get data from I2C data buffer in monitor mode.
+  *
+  * @param  None
+  * @retval The value read from DATA_BUFFER.  
+  *
+  * Note:	In monitor mode, the I2C module may lose the ability to stretch
+  * 		the clock (stall the bus) if the ENA_SCL bit is not set. This means that
+  * 		the processor will have a limited amount of time to read the contents of
+  * 		the data received on the bus. If the processor reads the I2DAT shift
+  * 		register, as it ordinarily would, it could have only one bit-time to
+  * 		respond to the interrupt before the received data is overwritten by
+  * 		new data.
+  */
+uint8_t I2C_MonitorGetDatabuffer(void)
+{
+	return ((uint8_t)(LPC_I2C->DATA_BUFFER));
+}
+
+
+
+void I2C_IRQHandler(void)
+{
+    uint8_t StatValue;  
+    StatValue = I2C_GetI2CStatus();
+    switch (StatValue) 
+	{
+/////////////////////////////////////////发送数据模块///////////////////////////////////////////////
+        case I2C_I2STAT_S_TX_SLAR_ACK:					/*收到从机地址和读标志，反回ACK，准备发送数据和接收ACK*/
+		{
+			if(command_state == read_status_state)
+			{
+				datapoint = (uint8_t *)&I2CSlaveBuffer[0];	/* 复位指针*/
+				sendByteCnt = 0;
+				I2C_SendByte(*datapoint);					/* 发送缓存的数据*/
+				datapoint++;
+				sendByteCnt++;								/* 发送数据计数器加1*/
+				I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+				I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			}
+			else
+			{
+				sendByteCnt = 0;
+				I2C_SendByte(0x00);							/* 发送缓存的数据*/
+				sendByteCnt++;								/* 发送数据计数器加1*/
+				I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+				I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			}
+			break;
+		}
+		case I2C_I2STAT_S_TX_ARB_LOST_M_SLA:			 /* 仲裁丢失从机地址和读写位，收到本机地址和读标志，反回ACK，准备发送数据和接收ACK，总线空闲时，STA置位，重新启动主机模式*/
+		{
+			datapoint = (uint8_t *)&I2CSlaveBuffer[0];	/* 复位指针*/
+			sendByteCnt = 0;
+			I2C_SendByte(*datapoint);					/* 发送缓存的数据*/
+			datapoint++;
+			sendByteCnt++;								/* 发送数据计数器加1*/
+			I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+		 	break;
+		}
+		case I2C_I2STAT_S_TX_DAT_ACK:					/* 数据已经发送，已经接收到ACK，准备发送数据和接收ACK*/
+		{    
+			if(command_state == read_status_state)
+			{
+				I2C_SendByte(*datapoint);					/* 发送缓存的数据*/
+				datapoint++;
+				sendByteCnt++;
+				I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+				I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/	
+				if(sendByteCnt == 8)	/* 一次发送数据完毕*/
+				{
+					command_state = function_code_state;
+				}
+			}
+			else
+			{
+				I2C_SendByte(0x00);					/* 发送缓存的数据*/
+				sendByteCnt++;
+				I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+				I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			}
+            
+		   break;
+		}
+		case I2C_I2STAT_S_TX_DAT_NACK:					/* 数据已经发送，已经接收到NACK*/
+		{
+            I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+		 	break;
+		}
+		case I2C_I2STAT_S_TX_LAST_DAT_ACK:			    /* 最后一个数据已经发送，已经接收到ACK*/
+		{
+		   	I2C_SetFlag(I2C_I2CONSET_AA);				/* 设置AA位有效，使能ACK*/
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+		   	break;
+		}
+/////////////////////////////////////接收数据数据模块///////////////////////////////////////
+		case I2C_I2STAT_S_RX_SLAW_ACK:					/* 接收到从机地址和写标志，回复ACK，将会接收数据和回复ACK*/
+		{
+			I2C_SetFlag(I2C_I2CONSET_AA);				/* 回复ACK*/  
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			RecByteCnt = 0;								/* 接收字节计数器清0*/
+			datapoint =  (uint8_t *)I2CSlaveBuffer;		/* 复位数据指针*/
+			command_state = function_code_state;				
+			break;
+		}
+		case I2C_I2STAT_S_RX_ARB_LOST_M_SLA:			/* 仲裁丢失从机地址和读写位，接收到从机地址和写标志，回复ACK，将会接收数据和回复，总线空闲时，STA置位，重新启动主机模式 */
+		{
+			I2C_SetFlag(I2C_I2CONSET_STA | I2C_I2CONSET_AA); /* 回复ACK,更换为主机模式，发送起启位*/  
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			RecByteCnt = 0;								/* 接收字节计数器清0*/
+			datapoint =  (uint8_t *)I2CSlaveBuffer;		/* 复位数据指针*/
+			command_state = function_code_state;
+			break;
+		}
+		case I2C_I2STAT_S_RX_PRE_SLA_DAT_ACK:			/* 已经接收到数据，并回复ACK，另一数据将会被读取*/
+		{
+			*datapoint = I2C_GetByte();	  				/* 读取数据到缓冲区*/
+			RecByteCnt++;
+			if(command_state == function_code_state)			/* 命令状态*/
+			{
+				if(RecByteCnt == 1)
+				{
+					  functionCode = *datapoint;
+					  command_state = read_length_state; 
+				}	
+			}
+			else if (command_state == read_length_state)
+			{
+				if(RecByteCnt == 4)
+				{
+					readDataLength = I2CSlaveBuffer[1];
+					writeDataLength = I2CSlaveBuffer[1];
+					if(functionCode == READ_STATUS)
+					{
+						Disable_Notify();						/* 取消通知2440读取状态*/
+						command_state = check_crc_state;		/*读状态*/
+					}
+					else if(functionCode == WRITE_IAP_INFO)
+					{
+						command_state = iap_info_state;			/*写信息结构体状态*/
+					}
+					else if(functionCode == WRITE_IAP_CMD)
+					{
+						command_state = iap_command_state;		/*IAP编程命令状态*/
+					}
+					else if(functionCode == WRITE_IAP_DATA)
+					{
+						command_state = iap_state;				/*IAP编程数据状态*/
+					}
+				}
+			}
+			else if(command_state == iap_info_state)			/*	接收IAP的信息结构体*/
+			{
+				if(RecByteCnt == (16+4))
+				{
+					iap_info.iap_length  = *((uint32_t*)&I2CSlaveBuffer[2]);
+					iap_info.iap_crc 	 = *((uint32_t*)&I2CSlaveBuffer[4]);
+					iap_info.iap_softVer = *((uint32_t*)&I2CSlaveBuffer[6]);
+					iap_info.iap_hardVer = *((uint32_t*)&I2CSlaveBuffer[8]); 
+					command_state = check_crc_state;
+				}		
+			}
+			else if(command_state == iap_command_state)							/* 接收IAP升级命令*/
+			{
+				if(RecByteCnt == 6)
+				{
+					bootLoader_iapFlag = 1;
+					command_state = check_crc_state;		
+				}			
+			}
+			else if(command_state == iap_state)									/* 接收IAP升级数据*/
+			{
+			 	if(RecByteCnt == (writeDataLength+4))
+				{
+					command_state = check_crc_state;		
+				}	
+			}
+			else if(command_state == check_crc_state)							/* 核对CRC16值，判断数据是否正确*/
+			{
+				if(functionCode == WRITE_IAP_INFO)								/* 对信息结构体的一帧数据进行校验*/
+				{
+					if(RecByteCnt == (2+16+4))
+					{
+					 	crcData = data_check_sum((uint8_t*)I2CSlaveBuffer,20);  	/* 校验CRC码*/
+						if(I2CSlaveBuffer[10] == crcData)
+						{
+							readAckState = OPERATE_TRUE;
+
+							appFlagPoint = (uint32_t *)USER_FLAG;
+							if(*appFlagPoint == APP_LOW)								/* 查用户程序标志区是否为低区*/
+							{
+								appFlagPoint = (uint32_t *)HARDVER_FLAG;				
+								if(*appFlagPoint == iap_info.iap_hardVer)				/* 判断硬件版本号是否正确*/
+								{		
+									if(iap_info.iap_length > APP_DEFLENGTH)				/* 判断长度是否正确*/			
+									{
+									 	readAckState = INFO_LENGTH_ERROR;	
+									}
+	
+									appFlagPoint = (uint32_t *)APPHIGH_SOFTVER_FLAG;	
+									if(*appFlagPoint > iap_info.iap_softVer)			/* 判断软件版本是否正确*/			
+									{
+									 	readAckState = INFO_SOFTWARE_ERROR;	
+									}	
+								}
+								else
+								{
+									readAckState = INFO_HARDWARE_ERROR;	
+								}		
+							}
+							else													/* 查用户程序标志区为高区*/
+							{
+							 	if(iap_info.iap_length > APP_DEFLENGTH)				/* 判断长度是否正确*/			
+								{
+								 	readAckState = INFO_LENGTH_ERROR;	
+								}
+							}
+
+						}
+						else
+							readAckState = CRC_ERROR;
+						Notify_S3C2440();										/* 通知2440读取状态*/	
+					}
+				}
+				else if(functionCode == WRITE_IAP_CMD)							/* 对IAP升级命令的一帧数据进行校验*/
+				{
+					if(RecByteCnt == 8)
+					{
+						iapDataLength = 0;
+						crcData = data_check_sum((uint8_t*)I2CSlaveBuffer,6);   /* 校验CRC码*/
+						if(I2CSlaveBuffer[3] == crcData)
+							readAckState = OPERATE_TRUE;
+						else
+							readAckState = CRC_ERROR;
+						Notify_S3C2440();										/* 通知2440读取状态*/
+					}
+				}
+				else if(functionCode == WRITE_IAP_DATA)							/* 对一帧升级数据进行校验*/
+				{
+					if(RecByteCnt == (writeDataLength+4+2))
+					{
+						crcData = data_check_sum((uint8_t*)I2CSlaveBuffer,(writeDataLength+4));  /* 得到CRC校验码*/
+						if(I2CSlaveBuffer[(writeDataLength+4)/2] == crcData)						/* 核对校验码*/
+						{
+						
+							readAckState = OPERATE_TRUE;
+						}
+						else
+						{
+							readAckState = CRC_ERROR;
+						}
+						if(readAckState == OPERATE_TRUE)						/* 标志升级标志位*/
+						{
+						 	iapFlag = YES;
+							iapDataLength = iapDataLength + writeDataLength;	/* 记录升级数据的长度*/
+						}
+						else
+						{
+							iapFlag = NO;
+							iapDataLength = iapDataLength;
+						}
+						if(iapDataLength ==  iap_info.iap_length)				/* 判断升级数据的长度是否达到信息结构体相应的长度*/
+						{
+						 	iapFinishFlag = YES;	
+						}
+						else
+						{
+						 	iapFinishFlag = NO;
+						}
+						Notify_S3C2440();										/* 通知2440读取状态*/
+					}
+				}
+				else if(functionCode == READ_STATUS)
+				{
+					if(RecByteCnt == 8)
+					{
+						 
+						 I2CSlaveBuffer[2] = readAckState;		/* 返回上次操作的状态*/
+						 I2CSlaveBuffer[3] = data_check_sum((uint8_t*)I2CSlaveBuffer,6);  /* 给出CRC校验码*/
+						 command_state = read_status_state;		/*读状态*/
+
+						 if(bootLoader_iapFlag == 0)
+						 {
+							 appFlagPoint = (uint32_t *)IAPDATA_FLAG;	/* 读取高标志位是否为空，0xFFFFFFFF*/
+							 if(*appFlagPoint == APP_INIT)
+							 {
+							  I2CSlaveBuffer[2] = AUTO_IAP_HIGH;		/* 返回升级高区状态*/
+							  I2CSlaveBuffer[3] = data_check_sum((uint8_t*)I2CSlaveBuffer,6);  /* 给出CRC校验码*/
+							  command_state = read_status_state;		/*读状态*/
+							 }
+						 }
+					}
+				}
+			}
+			datapoint++;
+			I2C_SetFlag(I2C_I2CONSET_AA);           /* 回复ACK*/                             
+			I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			break;
+		}
+		case I2C_I2STAT_S_RX_PRE_SLA_DAT_NACK:			/* 已经接收到数据，并回复NACK*/
+		{
+		   	I2C_SetFlag(I2C_I2CONSET_AA);               /* 回复ACK*/                
+	        I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			break;
+		}
+		case I2C_I2STAT_S_RX_STA_STO_SLVREC_SLVTRX:		/* 收到停止条件和重新启动标志*/
+		{
+			I2C_SetFlag(I2C_I2CONSET_AA);               /* 回复ACK*/               
+	        I2C_ClearFlag(I2C_I2CONCLR_SIC);			/* 清中断标志位*/
+			sendByteCnt = 0;							/* 发送字节计数器清0*/
+			break;
+		}
+        default:
+            break;
+    }
+}
+
+
+#endif // _I2C
+
+/**
+ * @}
+ */
+/* --------------------------------- End Of File ------------------------------ */
