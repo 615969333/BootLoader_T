@@ -58,60 +58,60 @@ void myDelay (uint32_t ulTime)
 * Output:               no
 * Return:               no
 *********************************************************************************************************/
-//#if (UART_PORT == 0)
-//#define LPC_UART_TypeDef_TEST LPC_UART0_TypeDef
-//#endif
+#if (UART_PORT == 0)
+#define LPC_UART_TypeDef_TEST LPC_UART0_TypeDef
+#endif
 
-//#if (UART_PORT == 1)
-//#define LPC_UART_TypeDef_TEST LPC_UART1_TypeDef
-//#endif
+#if (UART_PORT == 1)
+#define LPC_UART_TypeDef_TEST LPC_UART1_TypeDef
+#endif
 
-//void UART_IntHandler (LPC_UART_TypeDef_TEST *UARTx)
-//{
-//    uint32_t tmp;
-//    uint16_t intsrc;
-//	
-//    intsrc = UART_GetINTStatus((LPC_UART_TypeDef *)UARTx);                                  /*                  */
-//    tmp = intsrc & 0xE;                                                    
+void UART_IntHandler (LPC_UART_TypeDef_TEST *UARTx)
+{
+    uint32_t tmp;
+    uint16_t intsrc;
+	
+    intsrc = UART_GetINTStatus((LPC_UART_TypeDef *)UARTx);                                  /*                  */
+    tmp = intsrc & 0xE;                                                    
 
-//    GulNum = 0;
+    GulNum = 0;
 
-//    if (tmp & (UART_INTSTAT_RX_DATA_AVAILABLE |
-//                  UART_INTSTAT_RX_TIMEOUT) ) {
-//        switch (tmp) {
-//            case UART_INTSTAT_RX_DATA_AVAILABLE:                        /*                */
-//                GucRcvNew = 1;                                          /*                */
-//                                                                        /*                */
-//                 GulNum = UART_Receive(TEST_UART, GucRcvBuf, 8, UART_BLOKING_TIMEOUT);             
-//                 break;
-//            
-//             case UART_INTSTAT_RX_TIMEOUT:
-//                 GucRcvNew = 1;                                          /*              */
-//                 while (UARTx->LSR & UART_LS_RX_DATA_READY) {
-//                     UART_Receive(TEST_UART, &GucRcvBuf[GulNum], 1, UART_NO_TIMEOUT);
-//                     GulNum++;
-//                 }
-//                 break;
-//            
-//             default :
-//                 break;
-//         }
-//     }
-// }
+    if (tmp & (UART_INTSTAT_RX_DATA_AVAILABLE |
+                  UART_INTSTAT_RX_TIMEOUT) ) {
+        switch (tmp) {
+            case UART_INTSTAT_RX_DATA_AVAILABLE:                        /*                */
+                GucRcvNew = 1;                                          /*                */
+                                                                        /*                */
+                 GulNum = UART_Receive(TEST_UART, GucRcvBuf, 8, UART_BLOKING_TIMEOUT);             
+                 break;
+            
+             case UART_INTSTAT_RX_TIMEOUT:
+                 GucRcvNew = 1;                                          /*              */
+                 while (UARTx->LSR & UART_LS_RX_DATA_READY) {
+                     UART_Receive(TEST_UART, &GucRcvBuf[GulNum], 1, UART_NO_TIMEOUT);
+                     GulNum++;
+                 }
+                 break;
+            
+             default :
+                 break;
+         }
+     }
+ }
 
-// #if (UART_PORT == 0)
-// void UART0_IRQHandler(void)
-// {
-//     UART_IntHandler(LPC_UART0);
-// }
-// #endif
+ #if (UART_PORT == 0)
+ void UART0_IRQHandler(void)
+ {
+     UART_IntHandler(LPC_UART0);
+ }
+ #endif
 
-// #if (UART_PORT == 1)
-// void UART1_IRQHandler(void)
-// {
-//     UART_IntHandler(LPC_UART1);
-// }
-// #endif
+ #if (UART_PORT == 1)
+ void UART1_IRQHandler(void)
+ {
+     UART_IntHandler(LPC_UART1);
+ }
+ #endif
 
  /*********************************************************************************************************
  ** Function name:       uartInit
@@ -237,8 +237,8 @@ int main (void)
 		uartSendStr(ucBuf, 5); 
 		
 		uartSendStr((uint8_t *)"\r\n", 2);
-                                                 /* 打印输出                     */
-    uartSendStr((uint8_t *)"check way test\r\n", 14);
+                                                                        /* 打印输出                     */
+    uartSendStr((uint8_t *)"check way test\r\n", 16);
     myDelay(1);   
 
     while (1) { 

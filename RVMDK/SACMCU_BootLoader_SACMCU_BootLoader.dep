@@ -7,7 +7,7 @@ I (..\Source\CMIMS\CM0\core_cm0.h)(0x4FBA67DE)
 I (..\Source\CMIMS\LPC12xx\system_LPC12xx.h)(0x4E9F087E)
 F (..\Source\CMIMS\CM0\core_cm0.c)(0x4FBA67DE)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork -I..\Source\APP -I..\Source\Library\include -I..\Source\CMIMS\CM0 -I..\Source\CMIMS\LPC12xx -I..\Source\IAP-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\NXP\LPC12xx-D__BUILD_WITH_EXAMPLE__-o ..\output\core_cm0.o --omf_browse ..\output\core_cm0.crf --depend ..\output\core_cm0.d)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C7C554)
-F (..\Source\APP\main.c)(0x5E271FC6)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork -I..\Source\APP -I..\Source\Library\include -I..\Source\CMIMS\CM0 -I..\Source\CMIMS\LPC12xx -I..\Source\IAP-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\NXP\LPC12xx-D__BUILD_WITH_EXAMPLE__-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
+F (..\Source\APP\main.c)(0x5E273D8E)(-c --cpu Cortex-M0 -D__MICROLIB -g -O0 --apcs=interwork -I..\Source\APP -I..\Source\Library\include -I..\Source\CMIMS\CM0 -I..\Source\CMIMS\LPC12xx -I..\Source\IAP-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\NXP\LPC12xx-D__BUILD_WITH_EXAMPLE__-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
 I (C:\Keil\ARM\ARMCC\include\string.h)(0x51C7C554)
 I (C:\Keil\ARM\ARMCC\include\stdio.h)(0x51C7C554)
 I (..\Source\APP\dzx_maincfg.h)(0x5E07770F)
